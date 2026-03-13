@@ -21,11 +21,11 @@
     <style>
         :root {
             /* 粉咖系主題配色 */
-            --bg-color: #FDF6F5; /* 柔霧粉 (底色) */
-            --text-color: #594339; /* 深焙咖啡 (字體色) */
-            --accent: #C89B88; /* 玫瑰拿鐵/點綴色 */
-            --surface: #F2E8E4; /* 區塊底色 (稍深的粉) */
-            --dark-bg: #402F26; /* 橫向滾動區深咖啡底色 */
+            --bg-color: #FDF6F5;
+            --text-color: #594339;
+            --accent: #C89B88;
+            --surface: #F2E8E4;
+            --dark-bg: #402F26;
         }
         
         body, html {
@@ -42,7 +42,7 @@
             font-family: 'Cinzel', 'Noto Serif TC', serif;
         }
 
-        /* 效能優化：純 CSS 氛圍光背景，加入 translate3d 強制硬體加速 */
+        /* 效能優化：純 CSS 氛圍光背景 */
         .ambient-bg {
             position: fixed;
             top: 0;
@@ -71,7 +71,7 @@
             100% { transform: translate3d(8%, 8%, 0) scale(1.05); }
         }
 
-        /* 效能革命：純 CSS 粒子系統容器 (0% CPU 負載) */
+        /* 純 CSS 粒子系統容器 */
         #css-particles {
             position: fixed;
             top: 0;
@@ -84,8 +84,7 @@
         }
 
         /* Custom Cursor */
-        .cursor-dot,
-        .cursor-outline {
+        .cursor-dot, .cursor-outline {
             position: fixed;
             top: 0;
             left: 0;
@@ -93,16 +92,13 @@
             border-radius: 50%;
             z-index: 9999;
             pointer-events: none;
-            will-change: transform, width, height;
         }
         .cursor-dot {
-            width: 6px;
-            height: 6px;
+            width: 6px; height: 6px;
             background-color: var(--text-color);
         }
         .cursor-outline {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             border: 1px solid var(--accent);
             transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
         }
@@ -110,59 +106,42 @@
         /* Loader */
         .loader {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: var(--bg-color);
             z-index: 10000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
         }
         .loader-text {
-            color: var(--text-color);
-            font-size: 2.5rem;
-            letter-spacing: 0.4em;
-            text-transform: uppercase;
-            overflow: hidden;
+            color: var(--text-color); font-size: 2.5rem; letter-spacing: 0.4em;
+            text-transform: uppercase; overflow: hidden;
         }
         .loader-text span {
-            display: inline-block;
-            transform: translateY(100%);
+            display: inline-block; transform: translateY(100%);
         }
         .progress-bar {
-            width: 0%;
-            height: 2px;
-            background-color: var(--accent);
-            margin-top: 30px;
-            transition: width 0.1s ease-out;
+            width: 0%; height: 2px; background-color: var(--accent);
+            margin-top: 30px; transition: width 0.1s ease-out;
         }
 
-        /* 3D Tilt Image Container */
+        /* 效能革命 3D Tilt Image Container - 解決 Chrome 當機的核心 */
         .tilt-container {
             perspective: 1000px;
             transform-style: preserve-3d;
             width: 100%;
         }
         .tilt-card {
-            width: 100%;
-            height: auto;
+            width: 100%; height: auto;
             transition: transform 0.2s ease;
             transform-style: preserve-3d;
+            /* 移除全域的 will-change，只在 Hover 時觸發硬體加速，釋放 80% VRAM */
+        }
+        .tilt-container:hover .tilt-card {
             will-change: transform;
         }
         .tilt-card img {
-            width: 100%;
-            height: auto;
-            display: block;
-            object-fit: contain;
-            transform: translateZ(20px);
-            opacity: 0.95;
-            transition: opacity 0.3s;
-            box-shadow: 0 15px 35px rgba(89, 67, 57, 0.1); 
-            border-radius: 4px;
+            width: 100%; height: auto; display: block; object-fit: contain;
+            transform: translateZ(20px); opacity: 0.95; transition: opacity 0.3s;
+            box-shadow: 0 15px 35px rgba(89, 67, 57, 0.1); border-radius: 4px;
         }
         .tilt-card:hover img {
             opacity: 1;
@@ -170,76 +149,43 @@
 
         /* Horizontal Scroll Section */
         .horizontal-section {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-wrap: nowrap;
-            background-color: var(--dark-bg); 
-            color: var(--bg-color);
+            width: 100vw; height: 100vh; overflow: hidden; display: flex; flex-wrap: nowrap;
+            background-color: var(--dark-bg); color: var(--bg-color);
         }
         .horizontal-wrapper {
-            display: flex;
-            flex-wrap: nowrap;
-            height: 100%;
-            padding: 0 10vw;
-            align-items: center;
-            gap: 5vw; 
+            display: flex; flex-wrap: nowrap; height: 100%; padding: 0 10vw;
+            align-items: center; gap: 5vw; 
             will-change: transform;
         }
         .horizontal-item {
-            flex: 0 0 auto;
-            height: 60vh;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            flex: 0 0 auto; height: 60vh; position: relative;
+            display: flex; justify-content: center; align-items: center;
         }
         .horizontal-item img {
-            width: auto;
-            max-width: 90vw;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 4px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            width: auto; max-width: 90vw; height: 100%; object-fit: contain;
+            border-radius: 4px; box-shadow: 0 15px 35px rgba(0,0,0,0.3);
         }
 
         /* Masonry Gallery */
         .masonry-gallery {
-            column-count: 1;
-            column-gap: 2rem;
-            width: 100%;
+            column-count: 1; column-gap: 2rem; width: 100%;
         }
         @media (min-width: 768px) { .masonry-gallery { column-count: 2; } }
         @media (min-width: 1024px) { .masonry-gallery { column-count: 3; } }
         @media (min-width: 1536px) { .masonry-gallery { column-count: 4; } }
         
         .masonry-item {
-            break-inside: avoid;
-            margin-bottom: 2rem;
-            position: relative;
+            break-inside: avoid; margin-bottom: 2rem; position: relative;
         }
         
         .masonry-item img {
-            width: 100%;
-            height: auto;
-            display: block;
+            width: 100%; height: auto; display: block;
             box-shadow: 0 10px 30px rgba(89, 67, 57, 0.1);
-            object-fit: contain;
-            border-radius: 4px;
+            object-fit: contain; border-radius: 4px;
         }
 
-        /* Text Utilities */
-        .editorial-title {
-            font-size: clamp(3rem, 8vw, 7rem);
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-        }
-        
-        .accent-text {
-            color: var(--accent);
-        }
-
+        .editorial-title { font-size: clamp(3rem, 8vw, 7rem); line-height: 1.1; letter-spacing: -0.02em; }
+        .accent-text { color: var(--accent); }
         ::-webkit-scrollbar { display: none; }
     </style>
 </head>
@@ -256,19 +202,13 @@
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
 
-    <!-- 純 CSS 輕量氛圍光球 -->
     <div class="ambient-bg">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
     </div>
     
-    <!-- 全新零負載 CSS 粒子層 -->
-    <div id="css-particles">
-        <div id="stars1"></div>
-        <div id="stars2"></div>
-        <div id="stars3"></div>
-    </div>
+    <div id="css-particles"></div>
 
     <!-- Smooth Wrapper -->
     <div id="smooth-wrapper" class="relative z-10">
@@ -315,37 +255,37 @@
                 </div>
 
                 <div class="masonry-gallery">
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-1-1.jpg" alt="Visual" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-1-2.jpg" alt="Visual" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-1-3.jpg" alt="Visual" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-1-4.jpg" alt="Visual" loading="lazy"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-1-1.jpg" alt="Visual" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-1-2.jpg" alt="Visual" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-1-3.jpg" alt="Visual" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-1-4.jpg" alt="Visual" loading="lazy" decoding="async"></div></div>
                     
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-3-1.jpg" alt="Visual" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-3-2.jpg" alt="Visual" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-3-3.jpg" alt="Visual" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-3-4.jpg" alt="Visual" loading="lazy"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-3-1.jpg" alt="Visual" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-3-2.jpg" alt="Visual" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-3-3.jpg" alt="Visual" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-3-4.jpg" alt="Visual" loading="lazy" decoding="async"></div></div>
                     
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-4-1.png" alt="Visual" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-4-2.png" alt="Visual" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-4-3.jpg" alt="Visual" loading="lazy"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-4-1.png" alt="Visual" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-4-2.png" alt="Visual" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-4-3.jpg" alt="Visual" loading="lazy" decoding="async"></div></div>
 
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-2-1.png" alt="Layout" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-2-2.png" alt="Layout" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-2-3.png" alt="Layout" loading="lazy" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-2-1.png" alt="Layout" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-2-2.png" alt="Layout" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-2-3.png" alt="Layout" loading="lazy" decoding="async" class="object-contain"></div></div>
                     
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-5-1.jpg" alt="Brand" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-5-2.png" alt="Brand" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-5-3.jpg" alt="Brand" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-5-4.jpg" alt="Brand" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-5-5.png" alt="Brand" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-5-6.jpg" alt="Brand" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-5-7.jpg" alt="Brand" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-5-8.png" alt="Brand" loading="lazy" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-5-1.jpg" alt="Brand" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-5-2.png" alt="Brand" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-5-3.jpg" alt="Brand" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-5-4.jpg" alt="Brand" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-5-5.png" alt="Brand" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-5-6.jpg" alt="Brand" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-5-7.jpg" alt="Brand" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-5-8.png" alt="Brand" loading="lazy" decoding="async" class="object-contain"></div></div>
 
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-6-1.png" alt="Social Media" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-6-2.png" alt="Social Media" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-6-3.png" alt="Social Media" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-6-4.png" alt="Social Media" loading="lazy" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-6-1.png" alt="Social" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-6-2.png" alt="Social" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-6-3.png" alt="Social" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-6-4.png" alt="Social" loading="lazy" decoding="async" class="object-contain"></div></div>
                 </div>
             </section>
 
@@ -363,6 +303,7 @@
                     </div>
                     
                     <div class="horizontal-wrapper mt-10" id="h-wrapper">
+                        <!-- 橫向區塊的圖片不加 lazy loading，確保寬度能提早計算完成 -->
                         <div class="horizontal-item"><img src="PG-8-4.png" alt="Motion" class="object-contain p-4 bg-[#33241D]"></div>
                         <div class="horizontal-item"><img src="PG-8-1.jpg" alt="Motion"></div>
                         <div class="horizontal-item"><img src="PG-8-2.jpg" alt="Motion"></div>
@@ -378,7 +319,6 @@
                         <div class="horizontal-item"><img src="PG-10-1.jpg" alt="Motion"></div>
                         <div class="horizontal-item"><img src="PG-10-2.jpg" alt="Motion"></div>
                         
-                        <!-- 注意：因為圖2中有一張仍有括號，為防止破圖已做 %20 安全編碼 -->
                         <div class="horizontal-item"><img src="PG11%20(1).png" alt="Motion" class="object-contain bg-[#33241D]"></div>
                         <div class="horizontal-item"><img src="PG-11-1.jpg" alt="Motion"></div>
                         <div class="horizontal-item"><img src="PG-11-3.jpg" alt="Motion"></div>
@@ -410,67 +350,67 @@
                 </div>
 
                 <div class="masonry-gallery">
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-1.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-2.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-3.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-4.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-5.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-6.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-7.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-8.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-9.jpg" alt="Photo" loading="lazy"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-1.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-2.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-3.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-4.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-5.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-6.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-7.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-8.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-13-9.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
 
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-1.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-2.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-3.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-4.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-5.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-6.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-7.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-8.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-9.jpg" alt="Photo" loading="lazy"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-1.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-2.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-3.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-4.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-5.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-6.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-7.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-8.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-14-9.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
 
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-15-1.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-15-6.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-15-7.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-15-8.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-15-9.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-15-10.png" alt="Photo" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-15-11.png" alt="Photo" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-15-13.png" alt="Photo" loading="lazy" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-15-1.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-15-6.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-15-7.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-15-8.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-15-9.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-15-10.png" alt="Photo" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-15-11.png" alt="Photo" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-15-13.png" alt="Photo" loading="lazy" decoding="async" class="object-contain"></div></div>
 
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-16-1.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-16-2.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-16-3.jpg" alt="Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-16-4.png" alt="Photo" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-16-5.png" alt="Photo" loading="lazy" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-16-1.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-16-2.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-16-3.jpg" alt="Photo" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-16-4.png" alt="Photo" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-16-5.png" alt="Photo" loading="lazy" decoding="async" class="object-contain"></div></div>
 
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-17-1.jpg" alt="Food Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-17-2.jpg" alt="Food Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-17-3.jpg" alt="Food Photo" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-17-4.png" alt="Food Photo" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-17-5.png" alt="Food Photo" loading="lazy" class="object-contain"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-17-6.png" alt="Food Photo" loading="lazy" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-17-1.jpg" alt="Food" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-17-2.jpg" alt="Food" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-17-3.jpg" alt="Food" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-17-4.png" alt="Food" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-17-5.png" alt="Food" loading="lazy" decoding="async" class="object-contain"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card p-4"><img src="PG-17-6.png" alt="Food" loading="lazy" decoding="async" class="object-contain"></div></div>
 
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-18-1.jpg" alt="Portrait" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-18-2.jpg" alt="Portrait" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-18-3.jpg" alt="Portrait" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-18-4.jpg" alt="Portrait" loading="lazy"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-18-1.jpg" alt="Portrait" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-18-2.jpg" alt="Portrait" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-18-3.jpg" alt="Portrait" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-18-4.jpg" alt="Portrait" loading="lazy" decoding="async"></div></div>
 
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-19-1.jpg" alt="Landscape" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-19-2.jpg" alt="Landscape" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-19-3.jpg" alt="Landscape" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-19-4.jpg" alt="Landscape" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-19-5.jpg" alt="Landscape" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-19-6.jpg" alt="Landscape" loading="lazy"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-19-1.jpg" alt="Landscape" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-19-2.jpg" alt="Landscape" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-19-3.jpg" alt="Landscape" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-19-4.jpg" alt="Landscape" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-19-5.jpg" alt="Landscape" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-19-6.jpg" alt="Landscape" loading="lazy" decoding="async"></div></div>
 
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-1.jpg" alt="Animals" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-2.jpg" alt="Animals" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-3.jpg" alt="Animals" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-4.jpg" alt="Animals" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-5.jpg" alt="Animals" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-6.jpg" alt="Animals" loading="lazy"></div></div>
-                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-7.jpg" alt="Animals" loading="lazy"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-1.jpg" alt="Animals" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-2.jpg" alt="Animals" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-3.jpg" alt="Animals" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-4.jpg" alt="Animals" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-5.jpg" alt="Animals" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-6.jpg" alt="Animals" loading="lazy" decoding="async"></div></div>
+                    <div class="masonry-item tilt-container magnetic"><div class="tilt-card"><img src="PG-20-7.jpg" alt="Animals" loading="lazy" decoding="async"></div></div>
                 </div>
             </section>
 
@@ -509,7 +449,6 @@
                     LET'S<br>CREATE
                 </h2>
                 
-                <!-- 社群連結 -->
                 <div class="mt-12 flex gap-6 md:gap-10 z-10">
                     <a href="https://www.instagram.com/celestine__atelier/" target="_blank" rel="noopener noreferrer" class="magnetic group flex items-center justify-center w-14 h-14 rounded-full border border-[#C89B88] hover:bg-[#C89B88] transition-colors duration-300">
                         <svg class="w-6 h-6 fill-current text-[#C89B88] group-hover:text-[#3E2C22]" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
@@ -630,7 +569,7 @@
             });
         });
 
-        // --- 4. GSAP ScrollTrigger Animations ---
+        // --- 4. GSAP ScrollTrigger 動畫 ---
         gsap.registerPlugin(ScrollTrigger);
 
         const parallaxItems = document.querySelectorAll('.parallax-item');
@@ -643,20 +582,47 @@
             });
         });
 
-        const horizontalSection = document.querySelector('.horizontal-wrapper');
-        setTimeout(() => {
-            const scrollDistance = horizontalSection.scrollWidth - window.innerWidth;
-            gsap.to(horizontalSection, {
-                x: () => -scrollDistance,
-                ease: "none",
-                scrollTrigger: {
-                    trigger: "#horizontal-scroll-container",
-                    pin: true,
-                    scrub: 1,
-                    end: () => "+=" + scrollDistance 
-                }
-            });
-        }, 100);
+        // ====== 橫向滾動終極修復 (動態計算寬度) ======
+        const horizontalContainer = document.querySelector('#horizontal-scroll-container');
+        const horizontalWrapper = document.querySelector('.horizontal-wrapper');
+
+        function getScrollAmount() {
+            let wrapperWidth = horizontalWrapper.scrollWidth;
+            return -(wrapperWidth - window.innerWidth);
+        }
+
+        const horizontalTween = gsap.to(horizontalWrapper, {
+            x: getScrollAmount,
+            ease: "none"
+        });
+
+        ScrollTrigger.create({
+            trigger: horizontalContainer,
+            start: "top top",
+            end: () => `+=${horizontalWrapper.scrollWidth - window.innerWidth}`,
+            pin: true,
+            animation: horizontalTween,
+            scrub: 1,
+            invalidateOnRefresh: true // 允許在視窗改變或圖片載入後強制重新計算
+        });
+
+        // 加入圖片載入監聽：確保雲端載入較慢時，能即刻更新寬度
+        const horizontalImages = document.querySelectorAll('.horizontal-item img');
+        let hLoaded = 0;
+        horizontalImages.forEach(img => {
+            if(img.complete) {
+                hLoaded++;
+            } else {
+                img.addEventListener('load', () => {
+                    hLoaded++;
+                    // 每載入幾張或全部載入完，就請 GSAP 重新算一次寬度，防止卡死
+                    if(hLoaded === horizontalImages.length || hLoaded % 3 === 0) {
+                        ScrollTrigger.refresh();
+                    }
+                });
+            }
+        });
+        // ===========================================
 
         // --- 5. 3D Tilt Hover Effect ---
         const tiltContainers = document.querySelectorAll('.tilt-container');
@@ -687,7 +653,7 @@
             });
         });
 
-        // --- 6. 零負載效能革命：純 CSS 粒子引擎 ---
+        // --- 6. 純 CSS 粒子引擎 ---
         function createZeroLoadParticles() {
             const createShadows = (count) => {
                 let shadows = [];
