@@ -20,7 +20,7 @@
 
     <style>
         :root {
-            /* 粉咖系主題配色 */
+            /* 保持你原本的粉咖系主題配色，完全不更動 */
             --bg-color: #FDF6F5;
             --text-color: #594339;
             --accent: #C89B88;
@@ -71,16 +71,15 @@
             100% { transform: translate3d(8%, 8%, 0) scale(1.05); }
         }
 
-        /* 純 CSS 粒子系統容器 */
-        #css-particles {
+        /* Awwwards 等級 Canvas 粒子系統容器 */
+        #canvas-stars {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 1;
+            z-index: 1; /* 在氛圍光之上，內容之下 */
             pointer-events: none;
-            overflow: hidden;
         }
 
         /* Custom Cursor */
@@ -123,7 +122,7 @@
             margin-top: 30px; transition: width 0.1s ease-out;
         }
 
-        /* 效能革命 3D Tilt Image Container - 解決 Chrome 當機的核心 */
+        /* 效能革命 3D Tilt Image Container */
         .tilt-container {
             perspective: 1000px;
             transform-style: preserve-3d;
@@ -133,7 +132,6 @@
             width: 100%; height: auto;
             transition: transform 0.2s ease;
             transform-style: preserve-3d;
-            /* 移除全域的 will-change，只在 Hover 時觸發硬體加速，釋放 80% VRAM */
         }
         .tilt-container:hover .tilt-card {
             will-change: transform;
@@ -208,7 +206,8 @@
         <div class="orb orb-3"></div>
     </div>
     
-    <div id="css-particles"></div>
+    <!-- 替換為高效能 Canvas 背景 -->
+    <canvas id="canvas-stars"></canvas>
 
     <!-- Smooth Wrapper -->
     <div id="smooth-wrapper" class="relative z-10">
@@ -533,7 +532,7 @@
         // --- 3. Custom Magnetic Cursor ---
         const cursorDot = document.querySelector('.cursor-dot');
         const cursorOutline = document.querySelector('.cursor-outline');
-        let mouseX = 0, mouseY = 0;
+        let mouseX = -1000, mouseY = -1000;
         let outlineX = 0, outlineY = 0;
 
         window.addEventListener('mousemove', (e) => {
@@ -603,10 +602,9 @@
             pin: true,
             animation: horizontalTween,
             scrub: 1,
-            invalidateOnRefresh: true // 允許在視窗改變或圖片載入後強制重新計算
+            invalidateOnRefresh: true 
         });
 
-        // 加入圖片載入監聽：確保雲端載入較慢時，能即刻更新寬度
         const horizontalImages = document.querySelectorAll('.horizontal-item img');
         let hLoaded = 0;
         horizontalImages.forEach(img => {
@@ -615,14 +613,12 @@
             } else {
                 img.addEventListener('load', () => {
                     hLoaded++;
-                    // 每載入幾張或全部載入完，就請 GSAP 重新算一次寬度，防止卡死
                     if(hLoaded === horizontalImages.length || hLoaded % 3 === 0) {
                         ScrollTrigger.refresh();
                     }
                 });
             }
         });
-        // ===========================================
 
         // --- 5. 3D Tilt Hover Effect ---
         const tiltContainers = document.querySelectorAll('.tilt-container');
@@ -653,37 +649,112 @@
             });
         });
 
-        // --- 6. 純 CSS 粒子引擎 ---
-        function createZeroLoadParticles() {
-            const createShadows = (count) => {
-                let shadows = [];
-                for(let i=0; i<count; i++) {
-                    shadows.push(`${Math.random() * 100}vw ${Math.random() * 100}vh rgba(200, 155, 136, ${Math.random() * 0.6 + 0.2})`);
-                }
-                return shadows.join(', ');
+        // --- 6. Awwwards 級別 Canvas 微光星網 (星瑩特效) ---
+        // 取代原本效能較差且無互動的純 CSS 粒子系統
+        function initXingYingEffect() {
+            const canvas = document.getElementById('canvas-stars');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let animationFrameId;
+
+            const resize = () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                initParticles();
             };
 
-            const style = document.createElement('style');
-            style.innerHTML = `
-                .star-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-                .star-layer div { border-radius: 50%; will-change: transform; animation: animStar linear infinite; }
-                .star-layer div:after { content: " "; position: absolute; top: 100vh; left: 0; border-radius: 50%; }
-                
-                #stars1 { width: 2px; height: 2px; box-shadow: ${createShadows(70)}; animation-duration: 60s; }
-                #stars1:after { width: 2px; height: 2px; box-shadow: ${createShadows(70)}; }
-                #stars2 { width: 3px; height: 3px; box-shadow: ${createShadows(40)}; animation-duration: 90s; }
-                #stars2:after { width: 3px; height: 3px; box-shadow: ${createShadows(40)}; }
-                #stars3 { width: 5px; height: 5px; box-shadow: ${createShadows(20)}; animation-duration: 120s; filter: blur(1px); }
-                #stars3:after { width: 5px; height: 5px; box-shadow: ${createShadows(20)}; filter: blur(1px); }
-                
-                @keyframes animStar {
-                    from { transform: translate3d(0, 0px, 0); }
-                    to { transform: translate3d(0, -100vh, 0); }
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 1.5 + 0.5;
+                    this.vx = (Math.random() - 0.5) * 0.3; // 極緩慢的優雅漂浮
+                    this.vy = (Math.random() - 0.5) * 0.3;
+                    this.baseAlpha = Math.random() * 0.4 + 0.1;
+                    // 完美貼合你的品牌色：80% 粉褐色(C89B88)，20% 深褐色(594339)
+                    this.color = Math.random() > 0.2 ? '200, 155, 136' : '89, 67, 57'; 
                 }
-            `;
-            document.head.appendChild(style);
+                
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    // 螢幕邊緣反彈
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                }
+                
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${this.color}, ${this.baseAlpha})`;
+                    ctx.fill();
+
+                    // 滑鼠互動牽引光跡
+                    const dx = mouseX - this.x;
+                    const dy = mouseY - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(this.x, this.y);
+                        ctx.lineTo(mouseX, mouseY);
+                        const lineAlpha = (1 - distance / 150) * 0.3; // 距離越近越亮
+                        ctx.strokeStyle = `rgba(${this.color}, ${lineAlpha})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                        
+                        // 滑鼠靠近時，粒子往滑鼠微小偏移，增加黏滯流暢感
+                        this.x += dx * 0.005;
+                        this.y += dy * 0.005;
+                    }
+                }
+            }
+
+            const initParticles = () => {
+                particles = [];
+                // 為了保留原本畫面的「呼吸感」與「留白美學」，不放過多粒子
+                const count = window.innerWidth < 768 ? 40 : 80; 
+                for(let i = 0; i < count; i++) {
+                    particles.push(new Particle());
+                }
+            };
+
+            const animate = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 粒子更新與互相連線 (星座網效應)
+                for(let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                    
+                    for(let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        // 粒子之間夠靠近時，結成星網
+                        if(dist < 100) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            const alpha = (1 - dist / 100) * 0.15;
+                            // 使用粉褐色做連線
+                            ctx.strokeStyle = `rgba(200, 155, 136, ${alpha})`; 
+                            ctx.lineWidth = 0.3;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                animationFrameId = requestAnimationFrame(animate);
+            };
+
+            window.addEventListener('resize', resize);
+            resize();
+            animate();
         }
-        createZeroLoadParticles();
+        
+        // 啟動星瑩特效
+        initXingYingEffect();
 
         // --- 7. Image Fallback ---
         document.querySelectorAll('img').forEach(img => {
