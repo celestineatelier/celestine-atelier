@@ -145,23 +145,38 @@
             opacity: 1;
         }
 
-        /* Horizontal Scroll Section */
+        /* Horizontal Scroll Section - 【修改重點】：響應式排版優化 */
         .horizontal-section {
             width: 100vw; height: 100vh; overflow: hidden; display: flex; flex-wrap: nowrap;
             background-color: var(--dark-bg); color: var(--bg-color);
         }
         .horizontal-wrapper {
             display: flex; flex-wrap: nowrap; height: 100%; padding: 0 10vw;
-            align-items: center; gap: 5vw; 
+            /* 手機版：對齊底部並預留底部空間，讓出上方區域給文字 */
+            align-items: flex-end; 
+            padding-bottom: 12vh;
+            gap: 5vw; 
             will-change: transform;
         }
         .horizontal-item {
-            flex: 0 0 auto; height: 60vh; position: relative;
+            /* 手機版：將圖片高度縮小，避免往上推擠覆蓋介面 */
+            flex: 0 0 auto; height: 45vh; position: relative;
             display: flex; justify-content: center; align-items: center;
         }
         .horizontal-item img {
             width: auto; max-width: 90vw; height: 100%; object-fit: contain;
             border-radius: 4px; box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        /* 桌機版維持原樣置中與較大的圖片比例 */
+        @media (min-width: 768px) {
+            .horizontal-wrapper {
+                align-items: center;
+                padding-bottom: 0;
+            }
+            .horizontal-item {
+                height: 60vh;
+            }
         }
 
         /* Masonry Gallery */
@@ -292,8 +307,8 @@
             <section id="horizontal-scroll-container" class="relative z-20">
                 <div class="horizontal-section pt-32">
                     
-                    <!-- 【修復重點 2】：移除 w-full pr-10，改為 left-5 right-5 md:left-16 md:right-16，徹底解決文字裁切問題 -->
-                    <div class="absolute top-16 left-5 right-5 md:left-16 md:right-16 z-10">
+                    <!-- 【修改重點】：加入 pointer-events-none，讓文字層不會擋住使用者的滑動手勢 -->
+                    <div class="absolute top-16 left-5 right-5 md:left-16 md:right-16 z-10 pointer-events-none">
                         <div class="flex justify-between items-end border-b border-[#806456] pb-4">
                             <div>
                                 <h2 class="text-5xl md:text-7xl serif text-[#FDF6F5]">02. Motion & AI</h2>
@@ -669,13 +684,11 @@
                     this.x = Math.random() * canvas.width;
                     this.y = Math.random() * canvas.height;
                     
-                    // 【修正 1】：粒子稍微放大，從 0.5~2.0 -> 1.0~2.5
                     this.size = Math.random() * 1.5 + 1.0; 
                     
                     this.vx = (Math.random() - 0.5) * 0.3; 
                     this.vy = (Math.random() - 0.5) * 0.3;
                     
-                    // 【修正 1】：大幅提高基礎透明度，從 0.1~0.5 -> 0.3~0.8，讓星星明顯亮起
                     this.baseAlpha = Math.random() * 0.5 + 0.3; 
                     
                     this.color = Math.random() > 0.2 ? '200, 155, 136' : '89, 67, 57'; 
@@ -703,10 +716,9 @@
                         ctx.moveTo(this.x, this.y);
                         ctx.lineTo(mouseX, mouseY);
                         
-                        // 【修正 1】：滑鼠靠近時的光跡連線也調亮、調粗
-                        const lineAlpha = (1 - distance / 150) * 0.6; // 最大透明度提升至 0.6
+                        const lineAlpha = (1 - distance / 150) * 0.6;
                         ctx.strokeStyle = `rgba(${this.color}, ${lineAlpha})`;
-                        ctx.lineWidth = 0.8; // 稍微加粗
+                        ctx.lineWidth = 0.8; 
                         ctx.stroke();
                         
                         this.x += dx * 0.005;
@@ -740,10 +752,9 @@
                             ctx.moveTo(particles[i].x, particles[i].y);
                             ctx.lineTo(particles[j].x, particles[j].y);
                             
-                            // 【修正 1】：粒子之間自然結網的線條也調亮、調粗
-                            const alpha = (1 - dist / 100) * 0.3; // 最大透明度提升至 0.3
+                            const alpha = (1 - dist / 100) * 0.3; 
                             ctx.strokeStyle = `rgba(200, 155, 136, ${alpha})`; 
-                            ctx.lineWidth = 0.5; // 稍微加粗
+                            ctx.lineWidth = 0.5; 
                             ctx.stroke();
                         }
                     }
